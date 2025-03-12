@@ -1,5 +1,6 @@
 package org.example.technique;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -141,5 +142,52 @@ public class SlidingWindowTest {
         var output = numOfSubArrays(arr, k, threshold);
         System.out.println(output);
         assertEquals(expectedOutput, output);
+    }
+
+
+    @Test
+    void test() {
+        var result = bestTotalPriceSlidingWindow(new int[]{100, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 5);
+        System.out.println("result = " + result);
+    }
+
+    int bestTotalPriceBruteForce(int[] prices, int k) {
+        var maxTotal = 0;
+        for (int i = 0; i < prices.length - k + 1; i++) {
+            var slice = Arrays.copyOfRange(prices, i, i+k);
+            var temp = Arrays.stream(slice).sum();
+            maxTotal = Math.max(maxTotal, temp);
+        }
+
+        return maxTotal;
+    }
+
+    int bestTotalPriceSlidingWindow(int[] prices, int k) {
+        if (prices.length < k) {
+            return 0;
+        }
+
+//        var total = Arrays.stream(Arrays.copyOfRange(prices, 0, k)).sum();
+//        var maxTotal = total;
+//        for (int i = 0; i < prices.length - k; i++) {
+//            total -= prices[i];
+//            total += prices[i+k];
+//            maxTotal = Math.max(maxTotal, total);
+//        }
+
+        var total = 0;
+        var maxTotal = 0;
+        for (int i = 0; i < prices.length; i++) {
+            if (i < k) {
+                total += prices[i];
+                maxTotal = total;
+                continue;
+            }
+            total -= prices[i-k];
+            total += prices[i];
+            maxTotal = Math.max(maxTotal, total);
+        }
+
+        return maxTotal;
     }
 }
